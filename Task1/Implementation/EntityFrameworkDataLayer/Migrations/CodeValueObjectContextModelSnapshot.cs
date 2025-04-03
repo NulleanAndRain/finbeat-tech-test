@@ -31,6 +31,9 @@ namespace EntityFrameworkDataLayer.Migrations
                     b.Property<int>("Code")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("int");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

@@ -12,4 +12,7 @@ public class CodeValueObject
 	
 	[Required]
 	public string Value { get; set; }
+
+	[Required]
+	public int OrderNumber { get; set; }
 }

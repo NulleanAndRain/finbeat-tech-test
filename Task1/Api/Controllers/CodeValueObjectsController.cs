@@ -15,16 +15,24 @@ public class CodeValueObjectsController : Controller
 	}
 
 	[HttpGet("")]
-	public async Task<ActionResult<IEnumerable<CodeValueObject>>> Get([FromQuery] CodeValueObjectFilter? filter)
+	public async Task<ActionResult<IEnumerable<CodeValueObject>>> Get([FromQuery] CodeValueObjectFilter filter)
 	{
-		var result = await Service.GetObjectsByFilter(filter ?? new());
+		var result = await Service.GetObjectsByFilter(filter);
 		return Ok(result);
 	}
 
 	[HttpPost("")]
-	public async Task<IActionResult> Post([FromBody] Dictionary<int, string> objects)
+	public async Task<IActionResult> Post([FromBody] List<Dictionary<int, string>> objects)
 	{
-		await Service.SaveNewObjects(objects);
+		if (objects == null || !objects.Any()) {
+			return BadRequest("Request does not contain objects for saving");
+		}
+
+		var flatten = objects
+			.SelectMany(o => o.ToList())
+			.ToList();
+
+		await Service.SaveNewObjects(flatten);
 		return Ok();
 	}
 }

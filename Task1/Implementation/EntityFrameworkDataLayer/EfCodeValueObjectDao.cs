@@ -17,10 +17,14 @@ public class EfCodeValueObjectDao : ICodeValueObjectDao
 	public async Task<IEnumerable<CodeValueObject>> GetObjectsByFilter(CodeValueObjectFilter filter)
 	{
 		var result = await DbContext.CodeValueObjects
+			.AsNoTracking()
 			.Where(x => filter.Id == null || x.Id == filter.Id)
 			.Where(x => filter.Code == null || x.Code == filter.Code)
 			.Where(x => filter.ValueIncluded == null || x.Value.Contains(filter.ValueIncluded))
 			.Where(x => filter.ValueExact == null || x.Value.Equals(filter.ValueExact))
+			.OrderBy(x => x.OrderNumber)
+			.Skip((filter.Page - 1) * filter.ItemsPerPage)
+			.Take(filter.ItemsPerPage)
 			.ToListAsync();
 
 		return result;

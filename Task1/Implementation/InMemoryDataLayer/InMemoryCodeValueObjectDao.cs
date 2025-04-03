@@ -14,6 +14,7 @@ public class InMemoryCodeValueObjectDao : ICodeValueObjectDao
 			.Where(x => filter.Code == null || x.Code == filter.Code)
 			.Where(x => filter.ValueIncluded == null || x.Value.Contains(filter.ValueIncluded))
 			.Where(x => filter.ValueExact == null || x.Value.Equals(filter.ValueExact))
+			.OrderBy(x => x.OrderNumber)
 			.ToList();
 
 		return await Task.FromResult(result);

@@ -4,6 +4,6 @@ namespace BusinesLogicInterface;
 
 public interface ICodeValueObjectService
 {
-	Task SaveNewObjects(Dictionary<int, string> objectsRaw);
+	Task SaveNewObjects(IEnumerable<KeyValuePair<int, string>> objectsRaw);
 	Task<IEnumerable<CodeValueObject>> GetObjectsByFilter(CodeValueObjectFilter filter);
 }

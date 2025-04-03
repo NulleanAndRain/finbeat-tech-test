@@ -18,14 +18,18 @@ public class CodeValueObjectService : ICodeValueObjectService
 		return await Dao.GetObjectsByFilter(filter);
 	}
 
-	public async Task SaveNewObjects(Dictionary<int, string> objectsRaw)
+	public async Task SaveNewObjects(IEnumerable<KeyValuePair<int, string>> objectsRaw)
 	{
-		var objectsToSave = objectsRaw.Select(keyval => new CodeValueObject
-		{
-			Code = keyval.Key,
-			Value = keyval.Value,
-		})
-			.OrderBy(x => x.Code)
+		var objectsToSave = objectsRaw
+			.OrderBy(x => x.Key)
+			.Zip(Enumerable.Range(1, objectsRaw.Count()), 
+			(keyval, order) =>
+			new CodeValueObject
+			{
+				Code = keyval.Key,
+				Value = keyval.Value,
+				OrderNumber = order,
+			})
 			.ToList();
 
 		await Dao.SaveObjects(objectsToSave);

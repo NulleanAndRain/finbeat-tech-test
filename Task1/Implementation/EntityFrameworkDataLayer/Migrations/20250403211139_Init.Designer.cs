@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EntityFrameworkDataLayer.Migrations
 {
     [DbContext(typeof(CodeValueObjectContext))]
-    [Migration("20250403200746_Init")]
+    [Migration("20250403211139_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -32,6 +32,9 @@ namespace EntityFrameworkDataLayer.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("Value")
