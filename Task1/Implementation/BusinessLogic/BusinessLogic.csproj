@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Interfaces\BusinesLogicInterface\BusinesLogicInterface.csproj" />
+    <ProjectReference Include="..\..\Interfaces\DataLayerInterface\DataLayerInterface.csproj" />
   </ItemGroup>
 
 </Project>

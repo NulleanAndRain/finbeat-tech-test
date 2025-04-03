@@ -5,13 +5,23 @@ namespace InMemoryDataLayer;
 
 public class InMemoryCodeValueObjectDao : ICodeValueObjectDao
 {
-	public Task<IEnumerable<CodeValueObject>> GetObjectsByFilter(CodeValueObjectFilter filter)
+	private readonly List<CodeValueObject> _dataset = new();
+	public async Task<IEnumerable<CodeValueObject>> GetObjectsByFilter(CodeValueObjectFilter filter)
 	{
-		throw new NotImplementedException();
+		var result = _dataset
+			.Where(x => filter.Id == null || x.Id == filter.Id)
+			.Where(x => filter.Code == null || x.Code == filter.Code)
+			.Where(x => filter.ValueIncluded == null || x.Value.Contains(filter.ValueIncluded))
+			.Where(x => filter.ValueExact == null || x.Value.Equals(filter.ValueExact))
+			.ToList();
+
+		return await Task.FromResult(result);
 	}
 
 	public Task SaveObjects(IEnumerable<CodeValueObject> objects)
 	{
-		throw new NotImplementedException();
+		_dataset.Clear();
+		_dataset.AddRange(objects);
+		return Task.CompletedTask;
 	}
 }

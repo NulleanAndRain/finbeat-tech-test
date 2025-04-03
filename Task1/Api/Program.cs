@@ -4,12 +4,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.ConfigureDiContainer();
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen((opts) =>
+{
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, "api_doc.xml");
+    opts.IncludeXmlComments(xmlPath);
+});
 
-builder.Services.ConfigureDiContainer();
 
 var app = builder.Build();
 
