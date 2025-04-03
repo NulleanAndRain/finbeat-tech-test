@@ -6,6 +6,7 @@ namespace InMemoryDataLayer;
 public class InMemoryCodeValueObjectDao : ICodeValueObjectDao
 {
 	private readonly List<CodeValueObject> _dataset = new();
+
 	public async Task<IEnumerable<CodeValueObject>> GetObjectsByFilter(CodeValueObjectFilter filter)
 	{
 		var result = _dataset
