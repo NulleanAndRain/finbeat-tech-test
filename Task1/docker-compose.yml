@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+    database:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        environment:
+            - ACCEPT_EULA=Y
+            - MSSQL_SA_PASSWORD=Password123+
+        ports:
+            - 1401:1433
+        restart: always
+        hostname: sql1
+        container_name: sql1
+        healthcheck:
+          test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S sql1 -U sa -P Password123+ -C -Q 'SELECT 1' || exit 1"]
+          interval: 10s
+          retries: 10
+          start_period: 10s
+          timeout: 3s
+          
+    database.configurator:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        volumes:
+            - ./init:/docker-entrypoint-initdb.d
+        depends_on:
+            database:
+                condition: service_healthy
+        command: >
+            bash -c '/opt/mssql-tools18/bin/sqlcmd -S sql1 -U sa -P Password123+ -C -d master -i docker-entrypoint-initdb.d/init.sql;
+            echo "All done!";'
+
+    ef-migrations:
+        environment:
+            - ConnectionStrings__CodeValueDatabase=Server=sql1;Database=CodeValueDatabase;User ID=sa;Password="Password123+";TrustServerCertificate=true
+        depends_on:
+            database:
+                condition: service_healthy
+            database.configurator:
+                condition: service_completed_successfully
+        build: 
+            context: .
+            dockerfile: ./Api/EfMigrations.Dockerfile
+        
+    webapi:
+        environment:
+            - ConnectionStrings__CodeValueDatabase=Server=sql1;Database=CodeValueDatabase;User ID=sa;Password=Password123+;TrustServerCertificate=true
+        depends_on:
+            database:
+                condition: service_healthy
+            database.configurator:
+                condition: service_completed_successfully
+            ef-migrations:
+                condition: service_completed_successfully
+        build: 
+            context: .
+            dockerfile: ./Api/Dockerfile
+        ports:
+            - 8000:8080
+      
