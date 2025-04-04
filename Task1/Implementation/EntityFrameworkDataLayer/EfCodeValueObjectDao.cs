@@ -43,4 +43,17 @@ public class EfCodeValueObjectDao : ICodeValueObjectDao
 
 		await DbContext.SaveChangesAsync();
 	}
+
+	public async Task<int> GetItemsCountByFilter(CodeValueObjectFilter filter)
+	{
+		var result = await DbContext.CodeValueObjects
+			.AsNoTracking()
+			.Where(x => filter.Id == null || x.Id == filter.Id)
+			.Where(x => filter.Code == null || x.Code == filter.Code)
+			.Where(x => filter.ValueIncluded == null || x.Value.Contains(filter.ValueIncluded))
+			.Where(x => filter.ValueExact == null || x.Value.Equals(filter.ValueExact))
+			.CountAsync();
+
+		return result;
+	}
 }

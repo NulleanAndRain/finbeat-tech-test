@@ -35,4 +35,11 @@ public class CodeValueObjectsController : Controller
 		await Service.SaveNewObjects(flatten);
 		return Ok();
 	}
+
+	[HttpGet("PageCount")]
+	public async Task<ActionResult<IEnumerable<CodeValueObject>>> GetPagesCount([FromQuery] CodeValueObjectFilter filter)
+	{
+		var result = await Service.GetPageCountByFilter(filter);
+		return Ok(result);
+	}
 }

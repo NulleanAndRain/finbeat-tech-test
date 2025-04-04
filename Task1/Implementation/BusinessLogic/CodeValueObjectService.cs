@@ -34,4 +34,12 @@ public class CodeValueObjectService : ICodeValueObjectService
 
 		await Dao.SaveObjects(objectsToSave);
 	}
+
+	public async Task<int> GetPageCountByFilter(CodeValueObjectFilter filter)
+	{
+		var itemsCount = await Dao.GetItemsCountByFilter(filter);
+		var result = Math.Ceiling(1.0 * itemsCount / filter.ItemsPerPage);
+
+		return Convert.ToInt32(result);
+	}
 }

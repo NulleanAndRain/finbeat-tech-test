@@ -1,4 +1,5 @@
 using DI;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,15 @@ builder.Services.AddSwaggerGen((opts) =>
     opts.IncludeXmlComments(xmlPath);
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy((policy) =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -23,11 +33,18 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors();
 }
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+var appWorkingDir = AppContext.BaseDirectory;
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(appWorkingDir, "Static")),
+    RedirectToAppendTrailingSlash = true,
+    ServeUnknownFileTypes = true,
+});
 
 app.MapControllers();
 
